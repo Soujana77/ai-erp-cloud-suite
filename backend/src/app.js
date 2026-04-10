@@ -22,6 +22,17 @@ app.use("/api/finance", financeRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+const pool = require("./config/db");
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users");
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Test route
 app.get("/", (req, res) => {
   res.send("Smart ERP Backend Running 🚀");
