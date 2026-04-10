@@ -7,7 +7,7 @@ const employeeRoutes = require("./modules/employees/employees.routes");
 const financeRoutes = require("./modules/finance/finance.routes");
 const inventoryRoutes = require("./modules/inventory/inventory.routes");
 const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
-
+require("./config/db");
 const app = express();
 
 // Middleware
