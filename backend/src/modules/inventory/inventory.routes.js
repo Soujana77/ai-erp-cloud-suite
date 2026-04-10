@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("Inventory route working ✅");
-});
+const inventoryController = require('./inventory.controller');
+
+router.post('/', inventoryController.createItem);
+router.get('/', inventoryController.getAllItems);
+router.put('/', inventoryController.updateItem);
+router.delete('/', inventoryController.deleteItem);
 
 module.exports = router;
