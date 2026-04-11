@@ -1,15 +1,15 @@
 const db = require('../../config/db');
 
 const createEmployee = async (data) => {
-  const { name, email, department, salary } = data;
+  const { user_id, department, salary } = data;
 
   const query = `
-    INSERT INTO employees (name, email, department, salary)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO employees (user_id, department, salary)
+    VALUES ($1, $2, $3)
     RETURNING *;
   `;
 
-  const values = [name, email, department, salary];
+  const values = [user_id, department, salary];
   const result = await db.query(query, values);
   return result.rows[0];
 };
@@ -20,16 +20,16 @@ const getAllEmployees = async () => {
 };
 
 const updateEmployee = async (id, data) => {
-  const { name, email, department, salary } = data;
+  const { user_id, department, salary } = data;
 
   const query = `
     UPDATE employees
-    SET name = $1, email = $2, department = $3, salary = $4
-    WHERE id = $5
+    SET user_id = $1, department = $2, salary = $3
+    WHERE id = $4
     RETURNING *;
   `;
 
-  const values = [name, email, department, salary, id];
+  const values = [user_id, department, salary, id];
   const result = await db.query(query, values);
   return result.rows[0];
 };

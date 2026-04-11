@@ -13,14 +13,7 @@ const getAllEmployees = async (req, res, next) => {
 };
 const createEmployee = async (req, res, next) => {
   try {
-    const { name, email, department, salary } = req.body;
-
-    if (!name || !email || !department || !salary) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required fields: name, email, department, salary',
-      });
-    }
+    
 
     const employee = await employeeService.createEmployee(req.body);
     res.status(201).json({
