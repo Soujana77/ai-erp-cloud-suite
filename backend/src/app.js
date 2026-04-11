@@ -23,13 +23,14 @@ app.use("/api/dashboard", dashboardRoutes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("Smart ERP Backend Running 🚀");
+  res.json({
+    success: true,
+    message: "Smart ERP Backend Running",
+  });
 });
 
-// PORT
-const PORT = process.env.PORT || 5000;
+// Error middleware (must have 4 params)
+const errorHandler = require("./middleware/error.middleware");
+app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;

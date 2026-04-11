@@ -1,23 +1,6 @@
 const employeeService = require('./employees.service');
 
-const createEmployee = async (req, res) => {
-  try {
-    const employee = await employeeService.createEmployee(req.body);
-    res.status(201).json({
-      success: true,
-      message: 'Employee created successfully',
-      data: employee,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create employee',
-      error: error.message,
-    });
-  }
-};
-
-const getAllEmployees = async (req, res) => {
+const getAllEmployees = async (req, res, next) => {
   try {
     const employees = await employeeService.getAllEmployees();
     res.status(200).json({
@@ -25,16 +8,42 @@ const getAllEmployees = async (req, res) => {
       data: employees,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch employees',
-      error: error.message,
+    next(error);
+  }
+};
+const createEmployee = async (req, res, next) => {
+  try {
+    const { name, email, department, salary } = req.body;
+
+    if (!name || !email || !department || !salary) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields: name, email, department, salary',
+      });
+    }
+
+    const employee = await employeeService.createEmployee(req.body);
+    res.status(201).json({
+      success: true,
+      message: 'Employee created successfully',
+      data: employee,
     });
+  } catch (error) {
+    next(error);
   }
 };
 
-const updateEmployee = async (req, res) => {
+const updateEmployee = async (req, res, next) => {
   try {
+    const { name, email, department, salary } = req.body;
+
+    if (!name || !email || !department || !salary) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields: name, email, department, salary',
+      });
+    }
+
     const employee = await employeeService.updateEmployee(req.params.id, req.body);
 
     if (!employee) {
@@ -50,15 +59,11 @@ const updateEmployee = async (req, res) => {
       data: employee,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update employee',
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteEmployee = async (req, res) => {
+const deleteEmployee = async (req, res, next) => {
   try {
     const employee = await employeeService.deleteEmployee(req.params.id);
 
@@ -75,17 +80,13 @@ const deleteEmployee = async (req, res) => {
       data: employee,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete employee',
-      error: error.message,
-    });
+    next(error);
   }
 };
 
 module.exports = {
-  createEmployee,
   getAllEmployees,
+  createEmployee,
   updateEmployee,
   deleteEmployee,
 };
