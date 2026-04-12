@@ -1,16 +1,19 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import MainLayout from "../../layout/MainLayout";
 
 export default function Dashboard() {
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
+  // 🔐 Protected Route (safe check)
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
+  // 🚪 Logout handler (clean + safe)
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/";
+    navigate("/");
   };
 
   return (
@@ -57,7 +60,7 @@ export default function Dashboard() {
   );
 }
 
-/* ================= STYLES ================= */
+/* ================= STYLES (UNCHANGED EXACTLY) ================= */
 
 const headerStyle = {
   display: "flex",

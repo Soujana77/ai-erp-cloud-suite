@@ -1,33 +1,46 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const storedUser = JSON.parse(
-      localStorage.getItem("registeredUser")
-    );
-
-    if (!storedUser) {
-      alert("Please Sign In first");
-      navigate("/signin");
+    if (!email || !password) {
+      alert("Please fill all fields");
       return;
     }
 
-    if (
-      email === storedUser.email &&
-      password === storedUser.password
-    ) {
-      localStorage.setItem("token", "demo-token");
+    setLoading(true);
+
+    try {
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
+
+      // safety check (prevents crash if backend response changes)
+      if (!res.data || !res.data.token) {
+        alert("Invalid server response");
+        return;
+      }
+
+      localStorage.setItem("token", res.data.token);
+
       navigate("/dashboard");
-    } else {
-      alert("Invalid credentials");
+    } catch (err) {
+      alert(
+        err?.response?.data?.message ||
+          "Invalid credentials or server error"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,7 +68,7 @@ export default function Login() {
           />
 
           <button type="submit" style={btn}>
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -70,7 +83,8 @@ export default function Login() {
   );
 }
 
-/* styles same as above */
+/* ================= UI STYLES (UNCHANGED) ================= */
+
 const pageStyle = {
   height: "100vh",
   display: "flex",
