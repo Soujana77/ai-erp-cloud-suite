@@ -1,4 +1,17 @@
+<<<<<<< HEAD
 -- Smart ERP Database Schema (Final Production Version)
+=======
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS purchase_orders CASCADE;
+DROP TABLE IF EXISTS inventory_items CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS journal_entries CASCADE;
+DROP TABLE IF EXISTS accounts CASCADE;
+DROP TABLE IF EXISTS employees CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS tenants CASCADE;
+>>>>>>> ef8ce4e42f2c97aad81b2479e4808a42cb650ef3
 
 -- TENANTS
 CREATE TABLE tenants (
