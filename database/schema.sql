@@ -1,4 +1,6 @@
+-- Smart ERP Database Schema (Final Production Version)
 
+-- TENANTS
 CREATE TABLE tenants (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -29,7 +31,7 @@ CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     user_id INT UNIQUE,
     department VARCHAR(50),
-    salary NUMERIC(10,2),
+    salary NUMERIC(10,2) CHECK (salary > 0),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -46,7 +48,7 @@ CREATE TABLE accounts (
 CREATE TABLE journal_entries (
     id SERIAL PRIMARY KEY,
     account_id INT,
-    amount NUMERIC(10,2),
+    amount NUMERIC(10,2) CHECK (amount > 0),
     entry_type VARCHAR(10) CHECK (entry_type IN ('debit', 'credit')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (account_id) REFERENCES accounts(id)
@@ -56,7 +58,7 @@ CREATE TABLE journal_entries (
 CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     tenant_id INT,
-    amount NUMERIC(10,2),
+    amount NUMERIC(10,2) CHECK (amount > 0),
     transaction_type VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tenant_id) REFERENCES tenants(id)
@@ -67,7 +69,7 @@ CREATE TABLE inventory_items (
     id SERIAL PRIMARY KEY,
     tenant_id INT,
     product_name VARCHAR(100),
-    quantity INT DEFAULT 0,
+    quantity INT CHECK (quantity >= 0),
     price NUMERIC(10,2),
     FOREIGN KEY (tenant_id) REFERENCES tenants(id)
 );
@@ -90,3 +92,15 @@ CREATE TABLE notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- =====================
+-- INDEXES
+-- =====================
+
+CREATE INDEX idx_employee_name ON employees(department);
+
+CREATE INDEX idx_inventory_product_name ON inventory_items(product_name);
+
+CREATE INDEX idx_transactions_type ON transactions(transaction_type);
+
+CREATE INDEX idx_transactions_date ON transactions(created_at);
