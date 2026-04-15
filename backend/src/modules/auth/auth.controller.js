@@ -1,44 +1,55 @@
 const authService = require("./auth.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { successResponse } = require("../../utils/response");
 
 // REGISTER
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields required" });
+    // ✅ FIXED VALIDATION
+    if (!name?.trim() || !email?.trim() || !password?.trim()) {
+      const err = new Error("All fields required");
+      err.statusCode = 400;
+      return next(err);
     }
 
     const user = await authService.registerUser(name, email, password);
 
-    res.status(201).json({
-      message: "User registered successfully",
-      user,
-    });
+    return successResponse(res, "User registered successfully", user);
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return next(error);
   }
 };
 
-// LOGIN ✅ ADD THIS
-const login = async (req, res) => {
+// LOGIN
+const login = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
+
+    // ✅ ADDED VALIDATION
+    if (!email?.trim() || !password?.trim()) {
+      const err = new Error("All fields required");
+      err.statusCode = 400;
+      return next(err);
+    }
 
     const user = await authService.getUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      const err = new Error("User not found");
+      err.statusCode = 404;
+      return next(err);
     }
 
-    // TEMP: plain password check
-    const isMatch = password === user.password;
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      const err = new Error("Invalid password");
+      err.statusCode = 401;
+      return next(err);
     }
 
     const token = jwt.sign(
@@ -51,17 +62,14 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({
-      message: "Login successful",
-      token
-    });
+    return successResponse(res, "Login successful", { token });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return next(error);
   }
 };
 
-// ✅ EXPORT BOTH
+// EXPORT
 module.exports = {
   register,
   login

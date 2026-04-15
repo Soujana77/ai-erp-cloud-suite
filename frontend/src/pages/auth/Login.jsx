@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // ✅ ADD THIS
 
 export default function Login() {
   const navigate = useNavigate();
@@ -7,27 +8,34 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  // 🔥 UPDATED LOGIN FUNCTION
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const storedUser = JSON.parse(
-      localStorage.getItem("registeredUser")
-    );
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
 
-    if (!storedUser) {
-      alert("Please Sign In first");
-      navigate("/signin");
-      return;
-    }
+      // ✅ CHECK RESPONSE
+      if (res.data.success) {
+        const token = res.data.data.token;
 
-    if (
-      email === storedUser.email &&
-      password === storedUser.password
-    ) {
-      localStorage.setItem("token", "demo-token");
-      navigate("/dashboard");
-    } else {
-      alert("Invalid credentials");
+        // store token
+        localStorage.setItem("token", token);
+
+        // redirect
+        navigate("/dashboard");
+      } else {
+        alert(res.data.message);
+      }
+
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -70,7 +78,7 @@ export default function Login() {
   );
 }
 
-/* styles same as above */
+/* styles */
 const pageStyle = {
   height: "100vh",
   display: "flex",
