@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/user/user.routes");
 const employeeRoutes = require("./modules/employees/employees.routes");
@@ -29,7 +30,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Error middleware (must have 4 params)
+// Error middleware (must be last)
 const errorHandler = require("./middleware/error.middleware");
 app.use(errorHandler);
 

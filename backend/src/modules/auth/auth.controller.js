@@ -103,8 +103,29 @@ const refresh = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
+   
 
     return successResponse(res, "Token refreshed", { accessToken });
+
+  } catch (error) {
+    return next(error);
+  }
+};
+const { removeRefreshToken } = require("../../utils/tokenStore");
+
+const logout = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      const err = new Error("Refresh token required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    removeRefreshToken(refreshToken);
+
+    return successResponse(res, "Logged out successfully");
 
   } catch (error) {
     return next(error);
@@ -114,5 +135,6 @@ const refresh = async (req, res, next) => {
 module.exports = {
   register,
   login,
-  refresh
+  refresh,
+  logout
 };
