@@ -2,14 +2,14 @@ const authService = require("./auth.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { successResponse } = require("../../utils/response");
+const { addRefreshToken, isValidRefreshToken } = require("../../utils/tokenStore");
 
 // REGISTER
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    // ✅ FIXED VALIDATION
-     {
+    if (!name?.trim() || !email?.trim() || !password?.trim()) {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
@@ -29,8 +29,7 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ ADDED VALIDATION
-     {
+    if (!email?.trim() || !password?.trim()) {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
@@ -52,25 +51,68 @@ const login = async (req, res, next) => {
       return next(err);
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       {
         id: user.id,
         role_id: user.role_id,
         tenant_id: user.tenant_id
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "15m" }
     );
 
-    return successResponse(res, "Login successful", { token });
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    addRefreshToken(refreshToken);
+
+    return successResponse(res, "Login successful", {
+      accessToken,
+      refreshToken,
+    });
 
   } catch (error) {
     return next(error);
   }
 };
 
-// EXPORT
+// REFRESH TOKEN
+const refresh = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      const err = new Error("Refresh token required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    if (!isValidRefreshToken(refreshToken)) {
+      const err = new Error("Invalid refresh token");
+      err.statusCode = 403;
+      return next(err);
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+    const accessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    return successResponse(res, "Token refreshed", { accessToken });
+
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  refresh
 };
