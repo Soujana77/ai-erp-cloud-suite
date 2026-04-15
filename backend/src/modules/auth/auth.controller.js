@@ -9,7 +9,7 @@ const register = async (req, res, next) => {
     const { name, email, password } = req.body;
 
     // ✅ FIXED VALIDATION
-    if (!name?.trim() || !email?.trim() || !password?.trim()) {
+     {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     // ✅ ADDED VALIDATION
-    if (!email?.trim() || !password?.trim()) {
+     {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
