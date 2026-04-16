@@ -19,7 +19,35 @@ const getAllTransactions = async () => {
   return result.rows;
 };
 
+const getRecentTransactions = async (limit = 5) => {
+  const result = await db.query(
+    'SELECT * FROM transactions ORDER BY created_at DESC LIMIT $1',
+    [limit]
+  );
+  return result.rows;
+};
+
+const getFinanceSummary = async () => {
+  const incomeResult = await db.query(
+    "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE transaction_type='income'"
+  );
+  const expenseResult = await db.query(
+    "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE transaction_type='expense'"
+  );
+
+  const totalIncome = parseFloat(incomeResult.rows[0].coalesce);
+  const totalExpense = parseFloat(expenseResult.rows[0].coalesce);
+
+  return {
+    totalIncome,
+    totalExpense,
+    balance: totalIncome - totalExpense,
+  };
+};
+
 module.exports = {
   createTransaction,
   getAllTransactions,
+  getRecentTransactions,
+  getFinanceSummary,
 };

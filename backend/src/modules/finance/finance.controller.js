@@ -33,7 +33,24 @@ const getAllTransactions = async (req, res) => {
   }
 };
 
+const getFinanceSummary = async (req, res) => {
+  try {
+    const summary = await financeService.getFinanceSummary();
+    res.status(200).json({
+      success: true,
+      data: summary,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch finance summary',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createTransaction,
   getAllTransactions,
+  getFinanceSummary,
 };

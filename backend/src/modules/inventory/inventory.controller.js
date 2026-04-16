@@ -1,4 +1,4 @@
-const inventoryService = require('./inventory.sevice');
+const inventoryService = require('./inventory.service');
 
 const createItem = async (req, res) => {
     try {
@@ -71,9 +71,26 @@ const deleteItem = async (req, res) => {
   }
 };
 
+const getLowStockItems = async (req, res, next) => {
+  try {
+    const items = await inventoryService.getLowStockItems(10);
+    res.status(200).json({
+      success: true,
+      data: items
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch low stock items',
+      error: error.message
+    });
+  }
+};
+
 module.exports ={
     createItem,
     getAllItems,
     updateItem,
     deleteItem,
+    getLowStockItems,
 };
