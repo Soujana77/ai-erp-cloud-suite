@@ -9,10 +9,10 @@ const employeeController = require('./employees.controller');
 router.get('/', authMiddleware, employeeController.getAllEmployees);
 
 // CREATE → admin only
-router.post('/', authMiddleware, roleMiddleware([1]), employeeController.createEmployee);
+router.post('/', authMiddleware, roleMiddleware([1, 2]), employeeController.createEmployee);
 
 // UPDATE → admin only
-router.put('/:id', authMiddleware, roleMiddleware([1]), employeeController.updateEmployee);
+router.put('/:id', authMiddleware, roleMiddleware([1, 2]), employeeController.updateEmployee);
 
 // DELETE → admin only
 router.delete('/:id', authMiddleware, roleMiddleware([1]), employeeController.deleteEmployee);
