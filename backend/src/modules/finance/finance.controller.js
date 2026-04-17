@@ -107,9 +107,6 @@ const getFinanceSummary = async (req, res) => {
 module.exports = {
   createTransaction,
   getAllTransactions,
-<<<<<<< HEAD
   getFinanceSummary,
-=======
   getTransactionSummary,
->>>>>>> 9311bf2 (implemented advanced CRUD modules properly in backend)
 };
