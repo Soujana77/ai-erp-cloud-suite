@@ -6,6 +6,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Employees from "./pages/employees/Employees";
 import Finance from "./pages/finance/Finance";
 import Inventory from "./pages/inventory/Inventory";
+import { ToastProvider } from "./components/Toast";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -17,21 +18,23 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
+    <ToastProvider>
+      <Router>
+        <Routes>
 
-        {/* AUTH */}
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signin" element={<SignIn />} />
+          {/* AUTH */}
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signin" element={<SignIn />} />
 
-        {/* MAIN ERP APP */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-        <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
-        <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+          {/* MAIN ERP APP */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+          <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
+          <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
 
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </ToastProvider>
   );
 }
