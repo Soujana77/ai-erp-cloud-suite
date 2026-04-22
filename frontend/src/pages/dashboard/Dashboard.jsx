@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import Layout from "../../layout/Layout";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,8 +19,9 @@ export default function Dashboard() {
       .then((res) => {
         setData(res.data);
       })
-      .catch((err) => {
-        alert(err.response?.data?.message || "Failed to fetch dashboard");
+      .catch(() => {
+        localStorage.removeItem("token");
+        navigate("/");
       })
       .finally(() => {
         setLoading(false);
@@ -32,33 +29,28 @@ export default function Dashboard() {
   }, [navigate]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Dashboard</h1>
-        <button onClick={logout}>Logout</button>
-      </div>
-
-      <nav>
-        <ul>
-          <li><Link to="/employees">Employees</Link></li>
-          <li><Link to="/inventory">Inventory</Link></li>
-        </ul>
-      </nav>
-
-      <p>Welcome to Smart ERP System</p>
-
-      <div style={{ marginTop: "20px" }}>
-        <h3>API Response:</h3>
-        {loading ? (
-          <p>Loading...</p>
-        ) : data ? (
-          <pre style={{ background: "#f5f5f5", padding: "10px", overflow: "auto" }}>
+    <Layout>
+      <h1>Dashboard</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : data ? (
+        <div style={cardStyle}>
+          <h3>Dashboard Data</h3>
+          <pre style={{ background: "#f1f5f9", padding: "15px", borderRadius: "8px", overflow: "auto" }}>
             {JSON.stringify(data, null, 2)}
           </pre>
-        ) : (
-          <p>No data</p>
-        )}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <p>No data available</p>
+      )}
+    </Layout>
   );
 }
+
+const cardStyle = {
+  background: "white",
+  padding: "20px",
+  borderRadius: "8px",
+  marginTop: "20px",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+};
