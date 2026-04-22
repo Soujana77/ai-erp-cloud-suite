@@ -1,27 +1,29 @@
 const authService = require("./auth.service");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { successResponse } = require("../../utils/response");
-const { addRefreshToken, isValidRefreshToken } = require("../../utils/tokenStore");
+const {
+  addRefreshToken,
+  isValidRefreshToken,
+  removeRefreshToken
+} = require("../../utils/tokenStore");
 
 // REGISTER
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name?.trim() || !email?.trim() || !password?.trim()) {
+    if (!name || !email || !password) {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
     }
-    console.log("REGISTER BODY:", req.body);
 
     const user = await authService.registerUser(name, email, password);
 
     return successResponse(res, "User registered successfully", user);
-
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
 };
 
@@ -30,12 +32,11 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email?.trim() || !password?.trim()) {
+    if (!email || !password) {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
     }
-    console.log("LOGIN BODY:", req.body);
 
     const user = await authService.getUserByEmail(email);
 
@@ -56,8 +57,7 @@ const login = async (req, res, next) => {
     const accessToken = jwt.sign(
       {
         id: user.id,
-        role_id: user.role_id,
-        tenant_id: user.tenant_id
+        email: user.email
       },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
@@ -74,14 +74,18 @@ const login = async (req, res, next) => {
     return successResponse(res, "Login successful", {
       accessToken,
       refreshToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
     });
-
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
 };
 
-// REFRESH TOKEN
+// REFRESH
 const refresh = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
@@ -105,16 +109,14 @@ const refresh = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
-   
 
     return successResponse(res, "Token refreshed", { accessToken });
-
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
 };
-const { removeRefreshToken } = require("../../utils/tokenStore");
 
+// LOGOUT
 const logout = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
@@ -128,9 +130,8 @@ const logout = async (req, res, next) => {
     removeRefreshToken(refreshToken);
 
     return successResponse(res, "Logged out successfully");
-
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next(err);
   }
 };
 

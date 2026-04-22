@@ -4,7 +4,7 @@ require('./src/config/db');
 
 const PORT = 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`PostgreSQL Connected`);
 });
