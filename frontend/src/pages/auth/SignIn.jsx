@@ -1,35 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
+      const res = await api.post("/auth/register", {
+        name,
+        email,
+        password,
       });
 
-      const data = await res.json();
-      console.log("REGISTER RESPONSE:", data);
-
-      if (res.ok) {
-        alert("Sign In successful!");
+      if (res.data.success) {
+        alert("Registration successful! Please login.");
+        navigate("/");
       } else {
-        alert(data.message || "Registration failed");
+        alert(res.data.message || "Registration failed");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Error connecting to server");
+    } catch (err) {
+      alert(err.response?.data?.message || "Registration failed");
     }
   };
 

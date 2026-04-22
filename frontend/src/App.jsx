@@ -13,6 +13,7 @@ export default function App() {
 
         {/* AUTH */}
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* MAIN ERP APP */}
