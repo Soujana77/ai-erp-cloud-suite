@@ -1,105 +1,76 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
-  const navigate = useNavigate();
-
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = (e) => {
-    e.preventDefault();
+  const handleRegister = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
 
-    if (!email || !password) {
-      alert("Please fill all fields");
-      return;
+      const data = await res.json();
+      console.log("REGISTER RESPONSE:", data);
+
+      if (res.ok) {
+        alert("Sign In successful!");
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error connecting to server");
     }
-
-    // store credentials (frontend mock)
-    localStorage.setItem(
-      "registeredUser",
-      JSON.stringify({ email, password })
-    );
-
-    alert("Sign In successful!");
-    navigate("/"); // go to login page
   };
 
   return (
-    <div style={pageStyle}>
-      <div style={cardStyle}>
-        <h2>Create Account</h2>
-        <p style={{ color: "#666" }}>Sign in first to register</p>
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <h2>Create Account</h2>
 
-        <form onSubmit={handleSignIn} style={formStyle}>
-          <input
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle}
-          />
+      <input
+        type="text"
+        placeholder="Enter name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+      />
 
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-          />
+      <input
+        type="email"
+        placeholder="Enter email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+      />
 
-          <button type="submit" style={btn}>
-            Sign In
-          </button>
-        </form>
+      <input
+        type="password"
+        placeholder="Enter password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+      />
 
-        <p
-          onClick={() => navigate("/")}
-          style={{ color: "#2563eb", cursor: "pointer", marginTop: "10px" }}
-        >
-          Already have account? Login
-        </p>
-      </div>
+      <button
+        onClick={handleRegister}
+        style={{ padding: "10px 20px", marginTop: "10px" }}
+      >
+        Sign In
+      </button>
+
+      <p style={{ marginTop: "10px" }}>
+        Already have account? <a href="/">Login</a>
+      </p>
     </div>
   );
 }
-
-/* ===== STYLES ===== */
-
-const pageStyle = {
-  height: "100vh",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  background: "#f4f6f9",
-};
-
-const cardStyle = {
-  width: "340px",
-  padding: "30px",
-  background: "white",
-  borderRadius: "12px",
-  boxShadow: "0 2px 15px rgba(0,0,0,0.1)",
-  textAlign: "center",
-};
-
-const formStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-};
-
-const inputStyle = {
-  padding: "10px",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-};
-
-const btn = {
-  padding: "10px",
-  background: "#2563eb",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-};

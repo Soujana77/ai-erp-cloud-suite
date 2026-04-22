@@ -14,6 +14,7 @@ const register = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
+    console.log("REGISTER BODY:", req.body);
 
     const user = await authService.registerUser(name, email, password);
 
@@ -34,6 +35,7 @@ const login = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
+    console.log("LOGIN BODY:", req.body);
 
     const user = await authService.getUserByEmail(email);
 
