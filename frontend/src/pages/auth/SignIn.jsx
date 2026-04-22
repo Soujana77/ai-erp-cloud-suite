@@ -1,75 +1,44 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function SignIn() {
+export default function Register() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        { name, email, password }
+      );
 
-      const data = await res.json();
-      console.log("REGISTER RESPONSE:", data);
-
-      if (res.ok) {
-        alert("Sign In successful!");
+      if (res.data.success) {
+        alert("Account created successfully");
+        navigate("/login");
       } else {
-        alert(data.message || "Registration failed");
+        alert(res.data.message);
       }
-    } catch (error) {
-      console.error(error);
-      alert("Error connecting to server");
+    } catch (err) {
+      alert(err.response?.data?.message || "Server error");
     }
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Create Account</h2>
+    <div style={{ textAlign: "center", marginTop: "80px" }}>
+      <h2>Register</h2>
 
-      <input
-        type="text"
-        placeholder="Enter name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ display: "block", margin: "10px auto", padding: "10px" }}
-      />
+      <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+      <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-      <input
-        type="email"
-        placeholder="Enter email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ display: "block", margin: "10px auto", padding: "10px" }}
-      />
+      <button onClick={handleRegister}>Register</button>
 
-      <input
-        type="password"
-        placeholder="Enter password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ display: "block", margin: "10px auto", padding: "10px" }}
-      />
-
-      <button
-        onClick={handleRegister}
-        style={{ padding: "10px 20px", marginTop: "10px" }}
-      >
-        Sign In
-      </button>
-
-      <p style={{ marginTop: "10px" }}>
-        Already have account? <a href="/">Login</a>
+      <p onClick={() => navigate("/login")} style={{ cursor: "pointer", color: "blue" }}>
+        Already have account?
       </p>
     </div>
   );
