@@ -1,19 +1,25 @@
 const roleMiddleware = (allowedRoles = []) => {
   return (req, res, next) => {
     try {
-      console.log("User role:", req.user); // 👈 ADD THIS
+      if (!req.user || req.user.role_id == null) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: role not found",
+        });
+      }
 
-      const userRole = req.user.role_id;
+      const userRole = Number(req.user.role_id);
 
       if (!allowedRoles.includes(userRole)) {
-        const err = new Error("Access denied: insufficient permissions");
-        err.statusCode = 403;
-        return next(err);
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: insufficient permissions",
+        });
       }
 
       next();
     } catch (error) {
-      return next(error);
+      next(error);
     }
   };
 };

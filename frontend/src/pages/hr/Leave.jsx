@@ -6,34 +6,38 @@ export default function Leave() {
 
   return (
     <div>
-      <h2>Leave Management</h2>
+      <div className="card" style={{ marginBottom: "18px" }}>
+        <h3 style={{ marginBottom: "6px" }}>Leave Management</h3>
+        <p style={{ color: "#6b7280" }}>
+          Review leave requests, leave types, and approval status.
+        </p>
+      </div>
 
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {leaves.map((l) => (
-            <tr key={l.id}>
-              <td>{l.name}</td>
-              <td>{l.type}</td>
-              <td>{l.status}</td>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {leaves.map((l) => (
+              <tr key={l.id}>
+                <td>{l.name}</td>
+                <td>{l.type}</td>
+                <td>
+                  <span className={`badge ${l.status === "Approved" ? "success" : "warning"}`}>
+                    {l.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-const tableStyle = {
-  width: "100%",
-  marginTop: "20px",
-  background: "white",
-  borderCollapse: "collapse",
-};

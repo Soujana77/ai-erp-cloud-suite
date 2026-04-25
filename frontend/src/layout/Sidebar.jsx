@@ -6,89 +6,60 @@ export default function Sidebar() {
 
   const isActive = (path) => location.pathname === path;
 
-  const itemStyle = (active) => ({
-    padding: "10px",
-    cursor: "pointer",
-    borderRadius: "6px",
-    marginBottom: "8px",
-    background: active ? "#374151" : "transparent",
-    transition: "0.2s",
-  });
+  const items = [
+    { label: "Dashboard", path: "/dashboard", icon: "📊" },
+    { label: "Employees", path: "/employees", icon: "👥" },
+    { label: "Inventory", path: "/inventory", icon: "📦" },
+    { label: "Finance", path: "/finance", icon: "💰" },
+    { label: "Attendance", path: "/hr/attendance", icon: "🕒" },
+    { label: "Leave", path: "/hr/leave", icon: "📝" },
+    { label: "Org Chart", path: "/hr/orgchart", icon: "🌳" },
+    { label: "AI Forecasting", path: "/ai/forecasting", icon: "🤖" },
+    { label: "BI Dashboard", path: "/bi/dashboard", icon: "📈" },
+    { label: "Projects", path: "/projects", icon: "📁" },
+    { label: "Notifications", path: "/notifications", icon: "🔔" },
+    { label: "Security", path: "/security", icon: "🔐" },
+  ];
 
   return (
-    <div
-      style={{
-        width: "220px",
-        background: "#1f2937",
-        color: "white",
-        padding: "20px",
-        height: "100vh",
-      }}
-    >
-      <h2 style={{ marginBottom: "20px" }}>ERP Menu</h2>
+    <aside className="erp-sidebar">
+      <div className="erp-brand">ERP Menu</div>
 
-      {/* CORE */}
-      <div style={itemStyle(isActive("/dashboard"))} onClick={() => navigate("/dashboard")}>
-        📊 Dashboard
-      </div>
+      <div className="erp-section-label">Core Modules</div>
+      {items.slice(0, 4).map((item) => (
+        <div
+          key={item.path}
+          className={`erp-nav-item ${isActive(item.path) ? "active" : ""}`}
+          onClick={() => navigate(item.path)}
+        >
+          <span>{item.icon}</span>
+          <span>{item.label}</span>
+        </div>
+      ))}
 
-      <div style={itemStyle(isActive("/employees"))} onClick={() => navigate("/employees")}>
-        👥 Employees
-      </div>
+      <div className="erp-section-label">HR Module</div>
+      {items.slice(4, 7).map((item) => (
+        <div
+          key={item.path}
+          className={`erp-nav-item ${isActive(item.path) ? "active" : ""}`}
+          onClick={() => navigate(item.path)}
+        >
+          <span>{item.icon}</span>
+          <span>{item.label}</span>
+        </div>
+      ))}
 
-      <div style={itemStyle(isActive("/inventory"))} onClick={() => navigate("/inventory")}>
-        📦 Inventory
-      </div>
-
-      <div style={itemStyle(isActive("/finance"))} onClick={() => navigate("/finance")}>
-        💰 Finance
-      </div>
-
-      <hr style={{ margin: "15px 0", opacity: 0.3 }} />
-
-      {/* HR */}
-      <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "10px" }}>
-        HR MODULE
-      </div>
-
-      <div style={itemStyle(isActive("/hr/attendance"))} onClick={() => navigate("/hr/attendance")}>
-        🕒 Attendance
-      </div>
-
-      <div style={itemStyle(isActive("/hr/leave"))} onClick={() => navigate("/hr/leave")}>
-        📝 Leave
-      </div>
-
-      <div style={itemStyle(isActive("/hr/orgchart"))} onClick={() => navigate("/hr/orgchart")}>
-        🌳 Org Chart
-      </div>
-
-      <hr style={{ margin: "15px 0", opacity: 0.3 }} />
-
-      
-      <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "10px" }}>
-        ADVANCED MODULES
-      </div>
-
-      <div style={itemStyle(isActive("/ai/forecasting"))} onClick={() => navigate("/ai/forecasting")}>
-        🤖 AI Forecasting
-      </div>
-
-      <div style={itemStyle(isActive("/bi/dashboard"))} onClick={() => navigate("/bi/dashboard")}>
-        📊 BI Dashboard
-      </div>
-
-      <div style={itemStyle(isActive("/projects"))} onClick={() => navigate("/projects")}>
-        📁 Projects
-      </div>
-
-      <div style={itemStyle(isActive("/notifications"))} onClick={() => navigate("/notifications")}>
-        🔔 Notifications
-      </div>
-
-      <div style={itemStyle(isActive("/security"))} onClick={() => navigate("/security")}>
-        🔐 Security
-      </div>
-    </div>
+      <div className="erp-section-label">Advanced Modules</div>
+      {items.slice(7).map((item) => (
+        <div
+          key={item.path}
+          className={`erp-nav-item ${isActive(item.path) ? "active" : ""}`}
+          onClick={() => navigate(item.path)}
+        >
+          <span>{item.icon}</span>
+          <span>{item.label}</span>
+        </div>
+      ))}
+    </aside>
   );
 }

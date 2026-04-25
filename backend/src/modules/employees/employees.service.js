@@ -1,42 +1,42 @@
-const db = require('../../config/db');
+const db = require("../../config/db");
 
 const createEmployee = async (data) => {
-  const { user_id, department, salary } = data;
+  const { name, role, department } = data;
 
   const query = `
-    INSERT INTO employees (user_id, department, salary)
+    INSERT INTO employees (name, role, department)
     VALUES ($1, $2, $3)
     RETURNING *;
   `;
 
-  const values = [user_id, department, salary];
-  const result = await db.query(query, values);
+  const result = await db.query(query, [name, role, department]);
   return result.rows[0];
 };
 
 const getAllEmployees = async () => {
-  const result = await db.query('SELECT * FROM employees ORDER BY id ASC');
+  const result = await db.query("SELECT * FROM employees ORDER BY id ASC");
   return result.rows;
 };
 
 const updateEmployee = async (id, data) => {
-  const { user_id, department, salary } = data;
+  const { name, role, department } = data;
 
   const query = `
     UPDATE employees
-    SET user_id = $1, department = $2, salary = $3
+    SET name = $1, role = $2, department = $3
     WHERE id = $4
     RETURNING *;
   `;
 
-  const values = [user_id, department, salary, id];
-  const result = await db.query(query, values);
+  const result = await db.query(query, [name, role, department, id]);
   return result.rows[0];
 };
 
 const deleteEmployee = async (id) => {
-  const query = `DELETE FROM employees WHERE id = $1 RETURNING *;`;
-  const result = await db.query(query, [id]);
+  const result = await db.query(
+    "DELETE FROM employees WHERE id = $1 RETURNING *",
+    [id]
+  );
   return result.rows[0];
 };
 

@@ -14,7 +14,6 @@ export default function Finance() {
     const fetchFinance = async () => {
       try {
         const res = await getTransactions();
-
         const payload = res?.data?.data || {};
 
         setData({
@@ -38,110 +37,93 @@ export default function Finance() {
 
   return (
     <div>
-      <h2>Finance Module </h2>
+      <div className="card" style={{ marginBottom: "18px" }}>
+        <h3 style={{ marginBottom: "6px" }}>Finance Overview</h3>
+        <p style={{ color: "#6b7280" }}>
+          Monitor income, expenses, and transaction performance in one place.
+        </p>
+      </div>
 
-      {/* ================= SUMMARY CARDS ================= */}
-      <div style={grid}>
-        <div style={card}>
+      <div className="card-grid three">
+        <div className="card">
           <h4>Total Income</h4>
-          <p style={{ color: "green", fontSize: "18px" }}>
+          <p
+            style={{
+              color: "#16a34a",
+              fontSize: "2rem",
+              fontWeight: "800",
+              marginTop: "10px",
+            }}
+          >
             ₹ {data.income}
           </p>
         </div>
 
-        <div style={card}>
+        <div className="card">
           <h4>Total Expense</h4>
-          <p style={{ color: "red", fontSize: "18px" }}>
+          <p
+            style={{
+              color: "#dc2626",
+              fontSize: "2rem",
+              fontWeight: "800",
+              marginTop: "10px",
+            }}
+          >
             ₹ {data.expense}
           </p>
         </div>
 
-        <div style={card}>
-          <h4>Balance</h4>
-          <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+        <div className="card">
+          <h4>Net Balance</h4>
+          <p
+            style={{
+              fontSize: "2rem",
+              fontWeight: "800",
+              marginTop: "10px",
+            }}
+          >
             ₹ {balance}
           </p>
         </div>
       </div>
 
-      {/* ================= TABLE ================= */}
-      <h3 style={{ marginTop: "30px" }}>Recent Transactions</h3>
-
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th style={th}>ID</th>
-            <th style={th}>Type</th>
-            <th style={th}>Amount</th>
-            <th style={th}>Date</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.transactions.length === 0 ? (
+      <div className="table-wrap">
+        <table>
+          <thead>
             <tr>
-              <td style={td} colSpan="4">
-                No transactions found
-              </td>
+              <th>ID</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Date</th>
             </tr>
-          ) : (
-            data.transactions.map((t) => (
-              <tr key={t.id}>
-                <td style={td}>{t.id}</td>
+          </thead>
 
-                <td
-                  style={{
-                    ...td,
-                    color: t.type === "income" ? "green" : "red",
-                    fontWeight: "bold",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {t.type}
-                </td>
-
-                <td style={td}>₹ {t.amount}</td>
-                <td style={td}>{t.date}</td>
+          <tbody>
+            {data.transactions.length === 0 ? (
+              <tr>
+                <td colSpan="4">No transactions found</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.transactions.map((t) => (
+                <tr key={t.id}>
+                  <td>{t.id}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        t.type === "income" ? "success" : "danger"
+                      }`}
+                    >
+                      {t.type}
+                    </span>
+                  </td>
+                  <td>₹ {t.amount}</td>
+                  <td>{t.date}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gap: "15px",
-  marginTop: "20px",
-};
-
-const card = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "10px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-  textAlign: "center",
-};
-
-const tableStyle = {
-  width: "100%",
-  marginTop: "15px",
-  background: "white",
-  borderCollapse: "collapse",
-};
-
-const th = {
-  textAlign: "left",
-  padding: "12px",
-  background: "#f3f4f6",
-};
-
-const td = {
-  padding: "12px",
-  borderTop: "1px solid #eee",
-};

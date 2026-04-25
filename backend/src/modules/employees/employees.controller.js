@@ -1,4 +1,4 @@
-const employeeService = require('./employees.service');
+const employeeService = require("./employees.service");
 
 const getAllEmployees = async (req, res, next) => {
   try {
@@ -8,32 +8,44 @@ const getAllEmployees = async (req, res, next) => {
       data: employees,
     });
   } catch (error) {
+    console.log("GET EMPLOYEES ERROR:", error.message);
     next(error);
   }
 };
+
 const createEmployee = async (req, res, next) => {
   try {
-    
+    const { name, role, department } = req.body;
+
+    if (!name || !role || !department) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide name, role and department",
+      });
+    }
 
     const employee = await employeeService.createEmployee(req.body);
+
     res.status(201).json({
       success: true,
-      message: 'Employee created successfully',
+      message: "Employee created successfully",
       data: employee,
     });
   } catch (error) {
+    console.log("CREATE EMPLOYEE ERROR:", error.message);
     next(error);
+    
   }
 };
 
 const updateEmployee = async (req, res, next) => {
   try {
-    const { name, email, department, salary } = req.body;
+    const { name, role, department } = req.body;
 
-    if (!name || !email || !department || !salary) {
+    if (!name || !role || !department) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields: name, email, department, salary',
+        message: "Please provide name, role and department",
       });
     }
 
@@ -42,13 +54,13 @@ const updateEmployee = async (req, res, next) => {
     if (!employee) {
       return res.status(404).json({
         success: false,
-        message: 'Employee not found',
+        message: "Employee not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Employee updated successfully',
+      message: "Employee updated successfully",
       data: employee,
     });
   } catch (error) {
@@ -63,13 +75,13 @@ const deleteEmployee = async (req, res, next) => {
     if (!employee) {
       return res.status(404).json({
         success: false,
-        message: 'Employee not found',
+        message: "Employee not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Employee deleted successfully',
+      message: "Employee deleted successfully",
       data: employee,
     });
   } catch (error) {

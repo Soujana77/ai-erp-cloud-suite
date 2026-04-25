@@ -15,7 +15,6 @@ export default function Dashboard() {
     const fetchDashboard = async () => {
       try {
         const res = await getDashboard();
-
         const payload = res?.data?.data || {};
 
         setData({
@@ -40,64 +39,72 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2>ERP Dashboard</h2>
-      
+      <div className="card" style={{ marginBottom: "18px" }}>
+        <h3 style={{ marginBottom: "6px" }}>Overview</h3>
+        <p style={{ color: "#6b7280" }}>
+          Welcome to AI-ERP-CLOUD-SUITE. Here is the latest operational summary.
+        </p>
+      </div>
 
-      {/* ================= KPI GRID ================= */}
-      <div style={grid}>
-        <div style={card}>
-          <h4>Employees</h4>
-          <p>{data.totalEmployees}</p>
+      <div className="card-grid kpi">
+        <div className="card">
+          <h4>Total Employees</h4>
+          <p style={{ fontSize: "2rem", fontWeight: "800", marginTop: "10px" }}>
+            {data.totalEmployees}
+          </p>
         </div>
 
-        <div style={card}>
+        <div className="card">
           <h4>Inventory Items</h4>
-          <p>{data.totalProducts}</p>
+          <p style={{ fontSize: "2rem", fontWeight: "800", marginTop: "10px" }}>
+            {data.totalProducts}
+          </p>
         </div>
 
-        <div style={card}>
-          <h4>Income</h4>
-          <p style={{ color: "green" }}>₹ {data.income}</p>
+        <div className="card">
+          <h4>Total Income</h4>
+          <p
+            style={{
+              fontSize: "2rem",
+              fontWeight: "800",
+              marginTop: "10px",
+              color: "#16a34a",
+            }}
+          >
+            ₹ {data.income}
+          </p>
         </div>
 
-        <div style={card}>
-          <h4>Expense</h4>
-          <p style={{ color: "red" }}>₹ {data.expense}</p>
+        <div className="card">
+          <h4>Total Expense</h4>
+          <p
+            style={{
+              fontSize: "2rem",
+              fontWeight: "800",
+              marginTop: "10px",
+              color: "#dc2626",
+            }}
+          >
+            ₹ {data.expense}
+          </p>
         </div>
       </div>
 
-      {/* ================= FINANCIAL SNAPSHOT ================= */}
-      <div style={bottomGrid}>
-        <div style={card}>
+      <div className="card-grid two" style={{ marginTop: "18px" }}>
+        <div className="card">
           <h4>Net Balance</h4>
-          <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+          <p style={{ fontSize: "2rem", fontWeight: "800", marginTop: "10px" }}>
             ₹ {balance}
+          </p>
+        </div>
+
+        <div className="card">
+          <h4>System Status</h4>
+          <p style={{ marginTop: "10px", color: "#6b7280" }}>
+            All core ERP modules are available and connected.
           </p>
         </div>
       </div>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
-  gap: "15px",
-  marginTop: "20px",
-};
-
-const bottomGrid = {
-  display: "grid",
-  gridTemplateColumns: "1fr",
-  marginTop: "20px",
-};
-
-const card = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "10px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-  textAlign: "center",
-};

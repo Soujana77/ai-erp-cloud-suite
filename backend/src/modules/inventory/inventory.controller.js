@@ -1,29 +1,27 @@
-const inventoryService = require('./inventory.service');
+const inventoryService = require("./inventory.service");
 
-// 🔹 VALIDATION
 const validateInventoryInput = (body) => {
   const { item_name, quantity, price } = body;
 
   if (!item_name || quantity === undefined || price === undefined) {
-    return 'All fields are required';
+    return "All fields are required";
   }
 
-  if (String(item_name).trim() === '') {
-    return 'Item name cannot be empty';
+  if (String(item_name).trim() === "") {
+    return "Item name cannot be empty";
   }
 
   if (isNaN(quantity) || Number(quantity) < 0) {
-    return 'Quantity must be a valid non-negative number';
+    return "Quantity must be a valid non-negative number";
   }
 
   if (isNaN(price) || Number(price) < 0) {
-    return 'Price must be a valid non-negative number';
+    return "Price must be a valid non-negative number";
   }
 
   return null;
 };
 
-// 🔹 CREATE
 const createItem = async (req, res) => {
   try {
     const validationError = validateInventoryInput(req.body);
@@ -39,60 +37,57 @@ const createItem = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Item created successfully',
+      message: "Item created successfully",
       data: item,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to create item',
+      message: "Failed to create item",
       data: null,
       error: error.message,
     });
   }
 };
 
-// 🔹 GET ALL
 const getAllItems = async (req, res) => {
   try {
     const items = await inventoryService.getAllItems();
 
     res.status(200).json({
       success: true,
-      message: 'Items fetched successfully',
+      message: "Items fetched successfully",
       data: items,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch items',
+      message: "Failed to fetch items",
       data: null,
       error: error.message,
     });
   }
 };
 
-// 🔹 LOW STOCK
 const getLowStockItems = async (req, res) => {
   try {
     const items = await inventoryService.getLowStockItems(10);
 
     res.status(200).json({
       success: true,
-      message: 'Low stock items fetched successfully',
+      message: "Low stock items fetched successfully",
       data: items,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch low stock items',
+      message: "Failed to fetch low stock items",
       data: null,
       error: error.message,
     });
   }
 };
 
-// 🔹 UPDATE
 const updateItem = async (req, res) => {
   try {
     const validationError = validateInventoryInput(req.body);
@@ -109,27 +104,26 @@ const updateItem = async (req, res) => {
     if (!item) {
       return res.status(404).json({
         success: false,
-        message: 'Item not found',
+        message: "Item not found",
         data: null,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Item updated successfully',
+      message: "Item updated successfully",
       data: item,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to update item',
+      message: "Failed to update item",
       data: null,
       error: error.message,
     });
   }
 };
 
-// 🔹 DELETE
 const deleteItem = async (req, res) => {
   try {
     const item = await inventoryService.deleteItem(req.params.id);
@@ -137,20 +131,20 @@ const deleteItem = async (req, res) => {
     if (!item) {
       return res.status(404).json({
         success: false,
-        message: 'Item not found',
+        message: "Item not found",
         data: null,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Item deleted successfully',
+      message: "Item deleted successfully",
       data: null,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to delete item',
+      message: "Failed to delete item",
       data: null,
       error: error.message,
     });

@@ -1,73 +1,47 @@
 export default function OrgChart() {
   return (
-    <div style={container}>
-      <h2 style={title}>Organization Chart</h2>
-
-      {/* CEO */}
-      <div style={nodeRoot}>
-        <div style={card}>👑 CEO - John Smith</div>
+    <div>
+      <div className="card" style={{ marginBottom: "18px" }}>
+        <h3 style={{ marginBottom: "6px" }}>Organization Chart</h3>
+        <p style={{ color: "#6b7280" }}>
+          Visualize reporting structure across leadership, managers, and employees.
+        </p>
       </div>
 
-      {/* Level 1 */}
-      <div style={line} />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "18px",
+        }}
+      >
+        <div className="card" style={{ minWidth: "240px", textAlign: "center" }}>
+          <h4>CEO</h4>
+          <p style={{ color: "#6b7280" }}>PRASAD KVP</p>
+        </div>
 
-      <div style={level}>
-        <div style={card}>👨‍💼 Manager - Sarah Lee</div>
-      </div>
+        <div style={{ width: "2px", height: "28px", background: "#cbd5e1" }} />
 
-      {/* Level 2 */}
-      <div style={line} />
+        <div className="card" style={{ minWidth: "240px", textAlign: "center" }}>
+          <h4>Manager</h4>
+          <p style={{ color: "#6b7280" }}>SOUJANYA</p>
+        </div>
 
-      <div style={levelDeep}>
-        <div style={card}>👨‍💻 Employee - Raj Kumar</div>
-        <div style={card}>👩‍💻 Employee - Anjali Sharma</div>
+        <div style={{ width: "2px", height: "28px", background: "#cbd5e1" }} />
+
+        <div className="card-grid two" style={{ width: "100%", maxWidth: "620px" }}>
+          <div className="card" style={{ textAlign: "center" }}>
+            <h4>Employee</h4>
+            <p style={{ color: "#6b7280" }}>Raj Kumar</p>
+          </div>
+
+          <div className="card" style={{ textAlign: "center" }}>
+            <h4>Employee</h4>
+            <p style={{ color: "#6b7280" }}>Anjali Sharma</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-/* ========== STYLES ========== */
-
-const container = {
-  padding: "20px",
-  fontFamily: "Arial",
-};
-
-const title = {
-  marginBottom: "20px",
-};
-
-const nodeRoot = {
-  display: "flex",
-  justifyContent: "center",
-};
-
-const level = {
-  display: "flex",
-  justifyContent: "center",
-  gap: "20px",
-};
-
-const levelDeep = {
-  display: "flex",
-  justifyContent: "center",
-  gap: "20px",
-  flexWrap: "wrap",
-};
-
-const card = {
-  background: "#ffffff",
-  padding: "12px 20px",
-  borderRadius: "10px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-  border: "1px solid #eee",
-  minWidth: "180px",
-  textAlign: "center",
-};
-
-const line = {
-  width: "2px",
-  height: "25px",
-  background: "#ccc",
-  margin: "10px auto",
-};

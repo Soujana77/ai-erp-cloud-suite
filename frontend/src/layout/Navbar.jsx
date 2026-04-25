@@ -1,21 +1,24 @@
-export default function Navbar() {
-  return (
-    <div
-      style={{
-        height: "60px",
-        background: "white",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 20px",
-        borderBottom: "1px solid #ddd",
-      }}
-    >
-      <h3 style={{ margin: 0 }}>Smart ERP System</h3>
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-      <div style={{ fontSize: "14px", color: "#555" }}>
-        Admin Panel
+export default function Navbar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    toast.info("Logged out successfully");
+    navigate("/login");
+  };
+
+  return (
+    <header className="erp-topbar">
+      <div className="erp-title">AI-ERP-CLOUD-SUITE</div>
+      <div className="erp-top-actions">
+        <span>Admin Panel</span>
+        <button className="btn-secondary" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
-    </div>
+    </header>
   );
 }

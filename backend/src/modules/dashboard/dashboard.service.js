@@ -2,34 +2,23 @@ const db = require("../../config/db");
 const financeService = require("../finance/finance.service");
 const inventoryService = require("../inventory/inventory.service");
 
-// GET DASHBOARD DATA
 const getDashboardData = async () => {
   try {
-    // total employees
     const employeesResult = await db.query("SELECT COUNT(*) FROM employees");
-    const totalEmployees = parseInt(employeesResult.rows[0].count);
+    const totalEmployees = parseInt(employeesResult.rows[0].count, 10);
 
-    // reuse finance service (BEST PRACTICE)
-    const { totalIncome, totalExpense, balance } =
-      await financeService.getFinanceSummary();
-
-    // recent transactions
-    const recentTransactions =
-      await financeService.getRecentTransactions(5);
-
-    // low stock items
-    const lowStockItems =
-      await inventoryService.getLowStockItems(10);
+    const financeSummary = await financeService.getTransactionSummary();
+    const recentTransactions = await financeService.getRecentTransactions(5);
+    const lowStockItems = await inventoryService.getLowStockItems(10);
 
     return {
       totalEmployees,
-      totalRevenue: totalIncome,
-      totalExpenses: totalExpense,
-      balance,
+      totalRevenue: financeSummary.income,
+      totalExpenses: financeSummary.expense,
+      balance: financeSummary.balance,
       recentTransactions,
       lowStockItems,
     };
-
   } catch (error) {
     throw error;
   }

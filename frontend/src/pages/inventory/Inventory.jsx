@@ -5,27 +5,27 @@ import {
   deleteInventory,
   updateInventory,
 } from "../../services/api";
+import { toast } from "react-toastify";
 
 export default function Inventory() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
-    name: "",
-    stock: "",
+    item_name: "",
+    quantity: "",
+    price: "",
   });
 
   const [editingId, setEditingId] = useState(null);
 
-  // =========================
-  // FETCH INVENTORY
-  // =========================
   const fetchInventory = async () => {
     try {
       const res = await getInventory();
-      setItems(res.data.data || []);
+      setItems(res?.data?.data || []);
     } catch (err) {
       console.log("Inventory error:", err);
+      toast.error("Failed to load inventory");
     } finally {
       setLoading(false);
     }
@@ -35,158 +35,176 @@ export default function Inventory() {
     fetchInventory();
   }, []);
 
-  // =========================
-  // ADD / UPDATE ITEM
-  // =========================
   const handleSubmit = async () => {
     try {
-      if (editingId) {
-        await updateInventory(editingId, form);
-      } else {
-        await addInventory(form);
+      if (!form.item_name || form.quantity === "" || form.price === "") {
+        toast.error("Please enter item name, quantity and price");
+        return;
       }
 
-      setForm({ name: "", stock: "" });
+      const payload = {
+        item_name: form.item_name,
+        quantity: Number(form.quantity),
+        price: Number(form.price),
+      };
+
+      if (editingId) {
+        await updateInventory(editingId, payload);
+        toast.success("Inventory item updated");
+      } else {
+        await addInventory(payload);
+        toast.success("Inventory item added");
+      }
+
+      setForm({
+        item_name: "",
+        quantity: "",
+        price: "",
+      });
       setEditingId(null);
       fetchInventory();
     } catch (err) {
       console.log("Save error:", err);
+      toast.error(err.response?.data?.message || "Failed to save inventory item");
     }
   };
 
-  // =========================
-  // DELETE ITEM
-  // =========================
   const handleDelete = async (id) => {
     try {
       await deleteInventory(id);
+      toast.success("Inventory item deleted");
       fetchInventory();
     } catch (err) {
       console.log("Delete error:", err);
+      toast.error(err.response?.data?.message || "Failed to delete inventory item");
     }
   };
 
-  // =========================
-  // EDIT ITEM
-  // =========================
   const handleEdit = (item) => {
     setForm({
-      name: item.name,
-      stock: item.stock,
+      item_name: item.item_name ?? "",
+      quantity: item.quantity ?? "",
+      price: item.price ?? "",
     });
     setEditingId(item.id);
+    toast.info(`Editing ${item.item_name}`);
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setForm({
+      item_name: "",
+      quantity: "",
+      price: "",
+    });
   };
 
   if (loading) return <p>Loading inventory...</p>;
 
   return (
     <div>
-      <h2>Inventory </h2>
-
-      {/* ================= FORM ================= */}
-      <div style={formStyle}>
-        <input
-          placeholder="Item Name"
-          value={form.name}
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
-        />
-
-        <input
-          type="number"
-          placeholder="Stock"
-          value={form.stock}
-          onChange={(e) =>
-            setForm({ ...form, stock: e.target.value })
-          }
-        />
-
-        <button onClick={handleSubmit}>
-          {editingId ? "Update" : "Add"}
-        </button>
-
-        {editingId && (
-          <button
-            onClick={() => {
-              setEditingId(null);
-              setForm({ name: "", stock: "" });
-            }}
-          >
-            Cancel
-          </button>
-        )}
+      <div className="card" style={{ marginBottom: "18px" }}>
+        <h3 style={{ marginBottom: "6px" }}>Inventory Control</h3>
+        <p style={{ color: "#6b7280" }}>
+          Add, update, and monitor item quantity and price across inventory.
+        </p>
       </div>
 
-      {/* ================= TABLE ================= */}
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th style={th}>ID</th>
-            <th style={th}>Item</th>
-            <th style={th}>Stock</th>
-            <th style={th}>Status</th>
-            <th style={th}>Actions</th>
-          </tr>
-        </thead>
+      <div className="card">
+        <div className="form-row">
+          <input
+            placeholder="Item Name"
+            value={form.item_name}
+            onChange={(e) => setForm({ ...form, item_name: e.target.value })}
+          />
 
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td style={td}>{item.id}</td>
-              <td style={td}>{item.name}</td>
+          <input
+            type="number"
+            placeholder="Quantity"
+            value={form.quantity}
+            onChange={(e) => setForm({ ...form, quantity: e.target.value })}
+          />
 
-              <td
-                style={{
-                  ...td,
-                  color: item.stock < 10 ? "red" : "black",
-                  fontWeight: item.stock < 10 ? "bold" : "normal",
-                }}
-              >
-                {item.stock}
-              </td>
+          <input
+            type="number"
+            placeholder="Price"
+            value={form.price}
+            onChange={(e) => setForm({ ...form, price: e.target.value })}
+          />
 
-              <td style={td}>
-                {item.stock < 10 ? "Low Stock" : "Available"}
-              </td>
+          <button className="btn-primary" onClick={handleSubmit}>
+            {editingId ? "Update Item" : "Add Item"}
+          </button>
 
-              <td style={td}>
-                <button onClick={() => handleEdit(item)}>
-                  Edit
-                </button>
-                <button onClick={() => handleDelete(item.id)}>
-                  Delete
-                </button>
-              </td>
+          {editingId && (
+            <button className="btn-secondary" onClick={handleCancel}>
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {items.length === 0 ? (
+              <tr>
+                <td colSpan="6">No inventory items found</td>
+              </tr>
+            ) : (
+              items.map((item) => {
+                const lowStock = Number(item.quantity) < 10;
+
+                return (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.item_name}</td>
+                    <td
+                      style={{
+                        color: lowStock ? "#dc2626" : "#111827",
+                        fontWeight: lowStock ? "700" : "500",
+                      }}
+                    >
+                      {item.quantity}
+                    </td>
+                    <td>₹ {item.price}</td>
+                    <td>
+                      <span className={`badge ${lowStock ? "danger" : "success"}`}>
+                        {lowStock ? "Low Stock" : "Available"}
+                      </span>
+                    </td>
+                    <td style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        className="btn-secondary"
+                        onClick={() => handleEdit(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn-danger"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const formStyle = {
-  display: "flex",
-  gap: "10px",
-  marginBottom: "20px",
-};
-
-const tableStyle = {
-  width: "100%",
-  background: "white",
-  borderCollapse: "collapse",
-};
-
-const th = {
-  textAlign: "left",
-  padding: "12px",
-  background: "#f3f4f6",
-};
-
-const td = {
-  padding: "12px",
-  borderTop: "1px solid #eee",
-};
