@@ -1,8 +1,13 @@
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
+
 export default function MainLayout() {
+
+  const [collapsed, setCollapsed] = useState(true);
+
   const location = useLocation();
 
   const getTitle = () => {
@@ -20,19 +25,34 @@ export default function MainLayout() {
     if (path.includes("projects")) return "Project Management";
     if (path.includes("notifications")) return "Notifications";
     if (path.includes("security")) return "Security";
+
     return "ERP System";
   };
 
   return (
     <div className="erp-shell">
-      <Sidebar />
+
+      <Sidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
+
       <div className="erp-main">
+
         <Navbar />
+
         <main className="erp-content">
-          <h2 className="page-title">{getTitle()}</h2>
+
+          <h2 className="page-title">
+            {getTitle()}
+          </h2>
+
           <Outlet />
+
         </main>
+
       </div>
+
     </div>
   );
 }

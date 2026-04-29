@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const helmet = require("helmet");
+const aiRoutes = require("./modules/ai/ai.routes");
 
 // ✅ FIXED import for new express-rate-limit version
 const rateLimit = require("express-rate-limit").rateLimit;
@@ -85,7 +86,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/transactions", financeRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use("/api/ai", aiRoutes);
 /* =========================
    🧪 ROOT TEST
    ========================= */
