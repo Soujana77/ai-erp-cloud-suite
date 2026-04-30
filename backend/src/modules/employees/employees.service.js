@@ -1,44 +1,135 @@
 const db = require("../../config/db");
 
+
+// CREATE EMPLOYEE
 const createEmployee = async (data) => {
-  const { name, role, department } = data;
+
+  const {
+    user_id,
+    department,
+    salary,
+  } = data;
 
   const query = `
-    INSERT INTO employees (name, role, department)
+  
+    INSERT INTO employees
+    (
+      user_id,
+      department,
+      salary
+    )
+
     VALUES ($1, $2, $3)
+
     RETURNING *;
+
   `;
 
-  const result = await db.query(query, [name, role, department]);
+  const result = await db.query(
+    query,
+    [
+      user_id,
+      department,
+      salary,
+    ]
+  );
+
   return result.rows[0];
 };
 
+
+// GET ALL EMPLOYEES
 const getAllEmployees = async () => {
-  const result = await db.query("SELECT * FROM employees ORDER BY id ASC");
+
+  const query = `
+
+    SELECT
+
+      employees.id,
+
+      users.name,
+
+      roles.role_name AS role,
+
+      employees.department,
+
+      employees.salary
+
+    FROM employees
+
+    JOIN users
+      ON employees.user_id = users.id
+
+    JOIN roles
+      ON users.role_id = roles.id
+
+    ORDER BY employees.id ASC;
+
+  `;
+
+  const result = await db.query(query);
+
   return result.rows;
 };
 
-const updateEmployee = async (id, data) => {
-  const { name, role, department } = data;
+
+// UPDATE EMPLOYEE
+const updateEmployee = async (
+  id,
+  data
+) => {
+
+  const {
+    department,
+    salary,
+  } = data;
 
   const query = `
+
     UPDATE employees
-    SET name = $1, role = $2, department = $3
-    WHERE id = $4
+
+    SET
+      department = $1,
+      salary = $2
+
+    WHERE id = $3
+
     RETURNING *;
+
   `;
 
-  const result = await db.query(query, [name, role, department, id]);
+  const result = await db.query(
+    query,
+    [
+      department,
+      salary,
+      id,
+    ]
+  );
+
   return result.rows[0];
 };
 
+
+// DELETE EMPLOYEE
 const deleteEmployee = async (id) => {
+
   const result = await db.query(
-    "DELETE FROM employees WHERE id = $1 RETURNING *",
+
+    `
+      DELETE FROM employees
+
+      WHERE id = $1
+
+      RETURNING *;
+    `,
+
     [id]
   );
+
   return result.rows[0];
 };
+
 
 module.exports = {
   createEmployee,
