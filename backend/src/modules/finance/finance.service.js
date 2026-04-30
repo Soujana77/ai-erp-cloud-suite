@@ -30,8 +30,8 @@ const getRecentTransactions = async (limit = 5) => {
 const getTransactionSummary = async () => {
   const result = await db.query(`
     SELECT
-      COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS income,
-      COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS expense
+      COALESCE(SUM(CASE WHEN transaction_type = 'income' THEN amount ELSE 0 END), 0) AS income,
+      COALESCE(SUM(CASE WHEN transaction_type = 'expense' THEN amount ELSE 0 END), 0) AS expense
     FROM transactions
   `);
 
@@ -44,9 +44,33 @@ const getTransactionSummary = async () => {
   };
 };
 
+const getRevenueTrend = async () => {
+
+  const result = await db.query(`
+
+    SELECT
+      TO_CHAR(created_at, 'Mon') AS month,
+
+      SUM(amount)::INTEGER AS revenue
+
+    FROM transactions
+
+    WHERE transaction_type = 'income'
+
+    GROUP BY month, DATE_PART('month', created_at)
+
+    ORDER BY DATE_PART('month', created_at)
+
+  `);
+
+  return result.rows;
+};
+
 module.exports = {
   createTransaction,
   getAllTransactions,
   getRecentTransactions,
   getTransactionSummary,
+  getRevenueTrend
 };
+

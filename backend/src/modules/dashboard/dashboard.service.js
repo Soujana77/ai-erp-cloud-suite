@@ -8,17 +8,26 @@ const getDashboardData = async () => {
     const totalEmployees = parseInt(employeesResult.rows[0].count, 10);
 
     const financeSummary = await financeService.getTransactionSummary();
+    const revenueTrend = await financeService.getRevenueTrend();
     const recentTransactions = await financeService.getRecentTransactions(5);
     const lowStockItems = await inventoryService.getLowStockItems(10);
 
     return {
-      totalEmployees,
-      totalRevenue: financeSummary.income,
-      totalExpenses: financeSummary.expense,
-      balance: financeSummary.balance,
-      recentTransactions,
-      lowStockItems,
-    };
+  totalEmployees,
+
+  totalRevenue: financeSummary.income,
+
+  totalExpenses: financeSummary.expense,
+
+  balance: financeSummary.balance,
+
+  revenueTrend,
+
+  recentTransactions,
+
+  lowStockItems,
+};
+
   } catch (error) {
     throw error;
   }
