@@ -11,15 +11,27 @@ const {
 // REGISTER
 const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+   const {
+  name,
+  email,
+  password,
+  role_id,
+  tenant_id
+} = req.body;
 
-    if (!name || !email || !password) {
+    if (
+  !name ||
+  !email ||
+  !password ||
+  !role_id ||
+  !tenant_id
+) {
       const err = new Error("All fields required");
       err.statusCode = 400;
       return next(err);
     }
 
-    const user = await authService.registerUser(name, email, password);
+    const user = await authService.registerUser(name, email, password, role_id, tenant_id);
 
     return successResponse(res, "User registered successfully", user);
   } catch (err) {
@@ -30,7 +42,13 @@ const register = async (req, res, next) => {
 // LOGIN
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+   const {
+  name,
+  email,
+  password,
+  role_id,
+  tenant_id
+} = req.body;
 
     if (!email || !password) {
       const err = new Error("All fields required");
@@ -55,16 +73,22 @@ const login = async (req, res, next) => {
     }
 
     const accessToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email
-      },
+  {
+    id: user.id,
+    email: user.email,
+    role_id: user.role_id,
+    tenant_id: user.tenant_id
+  },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id },
+      {
+  id: user.id,
+  role_id: user.role_id,
+  tenant_id: user.tenant_id
+},
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -77,7 +101,9 @@ const login = async (req, res, next) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role_id: user.role_id,
+        tenant_id: user.tenant_id
       }
     });
   } catch (err) {
